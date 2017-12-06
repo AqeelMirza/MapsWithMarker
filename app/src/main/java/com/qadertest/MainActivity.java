@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,11 +26,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<Restaurant_ResponseModel> restaurant_responseModelArrayList;
     Restaurant_ResponseModel restaurant_responseModel;
     ListView listView;
+    ProgressDialog pDialog;
+    String Branch="Commit from branch";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         String url = "http://sandbox.bottlerocketapps.com/BR_iOS_CodingExam_2015_Server/restaurants.json";
 
-        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.show();
 
@@ -115,7 +120,14 @@ public class MainActivity extends AppCompatActivity {
                 pDialog.hide();
                 Toast.makeText(MainActivity.this, "Error Occurred.Please try again later.", Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
 
 // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq);
